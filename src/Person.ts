@@ -16,6 +16,12 @@ export class Person {
         console.log(`${this.name}: hello, I am ${this.age} years old`);
     }
 
+    get value(): string {
+        return "hi";
+    }
+    set value(val: string) {
+        console.log("setting val");
+    }
 }
 
 

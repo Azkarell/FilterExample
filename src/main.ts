@@ -1,13 +1,12 @@
 import {Person} from './Person';
-import { createFilter,  createFilterWrapper} from './Filter';
+import { createFilter,  createFilterWrapper, Filter} from './Filter';
 import { Subject } from 'rxjs';
 
 
 let source = new Subject<Person[]>();
 
-const stringval = "Gustav";
 
-let filter = createFilter<Person,string,Person>(source, stringval,(values: Person[], filtervals: string) => {
+let filter = createFilter<Person,string,Person>(source, (values: Person[], filtervals: string) => {
     return values.filter(x => x.name === filtervals);    
 });
 
@@ -19,17 +18,17 @@ let sub = filter.asObservable().subscribe(x => {
 
 source.next(
     [
-        new Person({name: "Gustav"}),
-        new Person({name: "Gustav2"}),
-        new Person({name: "Gustav3"}),
+        new Person({name: "Gustav", age: 25}),
+        new Person({name: "Hans", age: 33}),
+        new Person({name: "Peter", age: 22}),
     ]
 )
 console.log("calling..");
 filter.updateFilter("Gustav");
 console.log("calling..");
-filter.updateFilter("Gustav2");
+filter.updateFilter("Hans");
 console.log("calling..");
-filter.updateFilter("Gustav3");
+filter.updateFilter("Peter");
 
 sub.unsubscribe();
 
@@ -56,14 +55,19 @@ type PersonBaseTypes = SubTypes<Person, string | number >
 interface PersonFilterTypes extends PersonBaseTypes {};
 let p: PersonFilterTypes = new Person();
 
-let advancedFilter = createFilter(source,p,(values: Person[],filterVal: PersonFilterTypes) => {
-    return values.filter(x => filterVal.age === x.age || filterVal.name === x.name );
+let advancedFilter = createFilter(source,(values: Person[],filterVal: Partial<PersonFilterTypes>) => {
+    return values.filter(x => {
+        const ret = (filterVal.age == undefined ?   true : filterVal.age === x.age) || (filterVal.name == undefined ?  true : filterVal.name === x.name);
+        return ret;
+    });
 });
 
+let advancedFilter2 = createFilter(source,(values: Partial<Person>[],filterVal: Partial<Person>) => values.map(x => x.name));
 
-let filterupdatename = createFilterWrapper(p,advancedFilter, 'name' );
-let filterupdateage = createFilterWrapper(p,advancedFilter,'age');
 
+let filterupdatename = createFilterWrapper(advancedFilter,'name')
+let filterupdateage = createFilterWrapper(advancedFilter,'age');
+let filterupdatevalue = createFilterWrapper(advancedFilter,'value');
 let sub2 = advancedFilter.asObservable().subscribe(
     x => x.forEach(y => y.greet())
 );
@@ -71,17 +75,21 @@ let sub2 = advancedFilter.asObservable().subscribe(
 
 source.next(
     [
-        new Person({name: "Gustav" , age:23}),
-        new Person({name: "Gustav2", age:12}),
-        new Person({name: "Gustav3"}),
+        new Person({name: "Gustav", age: 25}),
+        new Person({name: "Hans", age: 33}),
+        new Person({name: "Peter", age: 22}),
     ]
 )
-console.log("calling 12 ..");
 
-filterupdateage.next(12);
-console.log("calling 23..");
 
-filterupdateage.next(23);
-console.log("calling gustav2..");
+console.log("calling..");
 
-filterupdatename.next("Gustav2");
+filterupdateage.next(undefined);
+console.log("calling..");
+
+filterupdatename.next("Gustav");
+console.log("calling..");
+
+filterupdateage.next(33);
+
+source.next(undefined);
