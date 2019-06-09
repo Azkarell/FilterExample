@@ -1,0 +1,20 @@
+{
+  "name": "filterexample",
+  "version": "1.0.0",
+  "description": "Filter-Example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx webpack --progress"
+  },
+  "author": "Daniel Schröder",
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^6.5.2"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.1",
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.3"
+  }
+}
