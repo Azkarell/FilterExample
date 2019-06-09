@@ -4,7 +4,6 @@ module.exports = {
     },
     entry: './bin/src/main.js',
     output: {
-        path: 'C:\\source\\repo\\FilterExample\\dist',
         filename: 'main.js'
     },
     watch: true,
