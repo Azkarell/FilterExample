@@ -2,14 +2,18 @@ export class Person {
     name: string = "Peter";
     age: number = 42;
     childs: Person[] = [];
-
+    partner: Person = new Person();
     constructor(data: Partial<Person> = {}){
         let {
             name = this.name,
-            age = this.age
+            age = this.age,
+            partner = this.partner,
+            childs = this.childs
         } = data;
         this.name = name;
         this.age = age;
+        this.partner = partner;
+        this.childs = childs;
     }
 
     greet(): void {
@@ -22,6 +26,7 @@ export class Person {
     set value(val: string) {
         console.log("setting val");
     }
+
 }
 
 
